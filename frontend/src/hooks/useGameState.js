@@ -7,19 +7,31 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 export function useGameState() {
   const [tasks, setTasks] = useState([]);
   const [session, setSession] = useState(null);
+  const [streak, setStreak] = useState({ current: 0, today_ships: 0, today_qualifies: false, ships_needed: 3, streak_at_risk: 0, best_ever: 0, threshold: 3 });
   const [view, setView] = useState('split');
   const [loading, setLoading] = useState(true);
   const [shipEvent, setShipEvent] = useState(null);
 
+  const fetchStreak = useCallback(async () => {
+    try {
+      const res = await axios.get(`${API}/streak`);
+      setStreak(res.data);
+    } catch (err) {
+      console.error('Streak fetch failed:', err);
+    }
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [tasksRes, sessionRes] = await Promise.all([
+        const [tasksRes, sessionRes, streakRes] = await Promise.all([
           axios.get(`${API}/tasks`),
-          axios.get(`${API}/session`)
+          axios.get(`${API}/session`),
+          axios.get(`${API}/streak`)
         ]);
         setTasks(tasksRes.data);
         setSession(sessionRes.data);
+        setStreak(streakRes.data);
       } catch (err) {
         console.error('Init fetch failed:', err);
       } finally {
@@ -54,8 +66,12 @@ export function useGameState() {
     try {
       const res = await axios.post(`${API}/tasks/${taskId}/ship`, { description });
       setTasks(prev => prev.map(t => t.id === taskId ? res.data : t));
-      const sessionRes = await axios.get(`${API}/session`);
+      const [sessionRes, streakRes] = await Promise.all([
+        axios.get(`${API}/session`),
+        axios.get(`${API}/streak`)
+      ]);
       setSession(sessionRes.data);
+      setStreak(streakRes.data);
       setShipEvent({ taskId, timestamp: Date.now() });
       toast.success('SHIPPED!', {
         description: res.data.title,
@@ -87,7 +103,7 @@ export function useGameState() {
 
   return {
     tasks, activeTasks, shippedTasks,
-    session, view, setView, loading,
+    session, streak, view, setView, loading,
     addTask, deleteTask, shipTask, saveDay,
     shipEvent, jarFill, fuelUsed, maxVolume,
   };

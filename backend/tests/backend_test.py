@@ -212,3 +212,82 @@ class TestReplays:
         assert r.status_code == 200
         for rp in r.json():
             assert "_id" not in rp
+
+
+# --- Streak --------------------------------------------------------
+class TestStreak:
+    """Daily-streak endpoint tests."""
+
+    def test_streak_returns_expected_fields(self, client):
+        r = client.get(f"{API}/streak")
+        assert r.status_code == 200, r.text
+        data = r.json()
+        for key in [
+            "current", "today_ships", "today_qualifies",
+            "ships_needed", "streak_at_risk", "best_ever", "threshold",
+        ]:
+            assert key in data, f"missing field: {key}"
+
+        # Types
+        assert isinstance(data["current"], int)
+        assert isinstance(data["today_ships"], int)
+        assert isinstance(data["today_qualifies"], bool)
+        assert isinstance(data["ships_needed"], int)
+        assert isinstance(data["streak_at_risk"], int)
+        assert isinstance(data["best_ever"], int)
+        assert isinstance(data["threshold"], int)
+
+        # No Mongo ObjectId leaks
+        assert "_id" not in data
+
+    def test_streak_threshold_is_3(self, client):
+        r = client.get(f"{API}/streak")
+        assert r.json()["threshold"] == 3
+
+    def test_today_qualifies_matches_score(self, client):
+        """today_qualifies should equal (today_ships >= threshold)."""
+        r = client.get(f"{API}/streak")
+        data = r.json()
+        assert data["today_qualifies"] == (data["today_ships"] >= data["threshold"])
+        # ships_needed is max(0, threshold - today_ships)
+        expected_needed = max(0, data["threshold"] - data["today_ships"])
+        assert data["ships_needed"] == expected_needed
+
+    def test_today_ships_matches_session_score(self, client):
+        """today_ships in /api/streak should match /api/session.score_you."""
+        session = client.get(f"{API}/session").json()
+        streak = client.get(f"{API}/streak").json()
+        assert streak["today_ships"] == session["score_you"]
+
+    def test_current_streak_gte_1_when_today_qualifies(self, client):
+        """Per agent context, today has 7+ ships, so current should be >= 1."""
+        data = client.get(f"{API}/streak").json()
+        if data["today_qualifies"]:
+            assert data["current"] >= 1, f"expected current>=1 when today qualifies, got {data}"
+
+    def test_best_ever_gte_current(self, client):
+        data = client.get(f"{API}/streak").json()
+        assert data["best_ever"] >= data["current"], (
+            f"best_ever ({data['best_ever']}) must be >= current ({data['current']})"
+        )
+
+    def test_streak_refetches_after_ship(self, client):
+        """Shipping a new task should keep /api/streak consistent with /api/session."""
+        # Ensure we have capacity
+        for t in client.get(f"{API}/tasks").json():
+            if t.get("title", "").startswith("TEST_"):
+                client.delete(f"{API}/tasks/{t['id']}")
+
+        before = client.get(f"{API}/streak").json()
+        # Create + ship a sand (5) task
+        tr = client.post(f"{API}/tasks", json={"title": "TEST_streak_ship", "task_type": "sand"})
+        assert tr.status_code == 200
+        tid = tr.json()["id"]
+        sr = client.post(f"{API}/tasks/{tid}/ship", json={"description": "streak test"})
+        assert sr.status_code == 200
+
+        after = client.get(f"{API}/streak").json()
+        assert after["today_ships"] == before["today_ships"] + 1
+        # When crossing the threshold for the first time, current should become >= 1
+        if not before["today_qualifies"] and after["today_qualifies"]:
+            assert after["current"] >= 1

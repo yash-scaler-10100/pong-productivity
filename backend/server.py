@@ -9,7 +9,7 @@ from pathlib import Path
 from pydantic import BaseModel
 from typing import Optional, Literal
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -176,6 +176,80 @@ async def get_replays():
         {}, {"_id": 0}
     ).sort("saved_at", -1).to_list(50)
     return replays
+
+
+STREAK_THRESHOLD = 3
+
+
+async def calculate_streak():
+    """Count consecutive days (including today) with >= 3 shipped tasks."""
+    today = datetime.now(timezone.utc).date()
+    streak = 0
+    current_date = today
+
+    while True:
+        date_str = current_date.strftime("%Y-%m-%d")
+        session = await db.sessions.find_one(
+            {"session_date": date_str},
+            {"_id": 0, "score_you": 1}
+        )
+        if session and session.get("score_you", 0) >= STREAK_THRESHOLD:
+            streak += 1
+            current_date -= timedelta(days=1)
+        else:
+            break
+
+    # Persist best streak
+    if streak > 0:
+        await db.stats.update_one(
+            {"type": "streak_record"},
+            {"$max": {"best_streak": streak}},
+            upsert=True
+        )
+
+    return streak, current_date + timedelta(days=1)  # streak start date
+
+
+@api_router.get("/streak")
+async def get_streak():
+    today = datetime.now(timezone.utc).date()
+    today_session = await db.sessions.find_one(
+        {"session_date": today.strftime("%Y-%m-%d")},
+        {"_id": 0, "score_you": 1}
+    )
+    today_ships = today_session.get("score_you", 0) if today_session else 0
+    today_qualifies = today_ships >= STREAK_THRESHOLD
+
+    current_streak, _ = await calculate_streak()
+
+    # Streak from yesterday (if today doesn't qualify yet, show what's "at risk")
+    yesterday = today - timedelta(days=1)
+    prev_streak = 0
+    check = yesterday
+    while True:
+        s = await db.sessions.find_one(
+            {"session_date": check.strftime("%Y-%m-%d")},
+            {"_id": 0, "score_you": 1}
+        )
+        if s and s.get("score_you", 0) >= STREAK_THRESHOLD:
+            prev_streak += 1
+            check -= timedelta(days=1)
+        else:
+            break
+
+    # Best ever
+    record = await db.stats.find_one({"type": "streak_record"}, {"_id": 0})
+    best = record.get("best_streak", 0) if record else 0
+
+    return {
+        "current": current_streak,
+        "today_ships": today_ships,
+        "today_qualifies": today_qualifies,
+        "ships_needed": max(0, STREAK_THRESHOLD - today_ships),
+        "streak_at_risk": prev_streak if not today_qualifies and prev_streak > 0 else 0,
+        "best_ever": max(best, current_streak),
+        "threshold": STREAK_THRESHOLD,
+    }
 
 
 app.include_router(api_router)

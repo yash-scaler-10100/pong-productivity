@@ -29,6 +29,7 @@ export default function ZenithApp() {
         fuelUsed={state.fuelUsed}
         maxVolume={state.maxVolume}
         shippedCount={state.shippedTasks.length}
+        streak={state.streak}
         onSaveDay={() => setShowReplay(true)}
       />
 
@@ -65,6 +66,7 @@ export default function ZenithApp() {
           session={state.session}
           shippedTasks={state.shippedTasks}
           allTasks={state.tasks}
+          streak={state.streak}
           onClose={() => setShowReplay(false)}
           onSave={state.saveDay}
         />
