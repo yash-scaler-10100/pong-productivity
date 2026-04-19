@@ -15,13 +15,16 @@ No database service is required. Match data is stored in local JSON files under
 `.chaospong-data/` by default. On Vercel, serverless file writes use `/tmp`
 unless `LOCAL_DATA_DIR` is provided.
 
+There is no separate server runtime in this project. All server behavior runs
+through Next.js Route Handlers in `app/api`, which Vercel deploys as serverless
+functions.
+
 ## Deploy on Vercel
 
 1. Import this repository into Vercel.
 2. Keep the project root as the Vercel root directory.
 3. Optional environment variables:
    - `LOCAL_DATA_DIR`: local JSON storage directory.
-   - `CORS_ORIGINS`: optional comma-separated origins for the legacy FastAPI shim.
 4. Deploy.
 
 ## Local Development
@@ -32,11 +35,3 @@ npm run dev
 ```
 
 The app runs at `http://localhost:3000`.
-
-The legacy FastAPI shim is still available for older tests and also uses local
-JSON storage:
-
-```bash
-python -m pip install -r requirements.txt
-uvicorn backend.server:app --reload --host 0.0.0.0 --port 8000
-```

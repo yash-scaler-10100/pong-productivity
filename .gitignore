@@ -47,12 +47,6 @@ dump.rdb
 .DS_Store
 *.pem
 
-# Python
-__pycache__/
-*pyc*
-venv/
-.venv/
-
 # Development tools
 chainlit.md
 .chainlit
@@ -77,8 +71,6 @@ agenthub/agents/youtube/db
 # Build caches
 .cache/
 
-memory/test_credentials.md
-
 # Mobile development
 android-sdk/
 
@@ -91,4 +83,3 @@ credentials.json
 *.key
 .credentials
 !.env.example
-!frontend/.env.example
