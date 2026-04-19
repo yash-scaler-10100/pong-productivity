@@ -41,6 +41,7 @@ yarn-error.log*
 .pnpm-debug.log*
 .next-dev*.log
 dump.rdb
+.chaospong-data/
 
 # System files
 .DS_Store

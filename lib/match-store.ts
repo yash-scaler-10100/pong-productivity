@@ -1,13 +1,14 @@
 import { readFile, writeFile, mkdir } from "fs/promises";
 import { join } from "path";
-import { tmpdir } from "os";
 import type { MatchData } from "@/lib/types";
 
 type MatchStoreGlobal = typeof globalThis & {
   __chaosPongMatches?: Map<string, MatchData>;
 };
 
-const STORE_DIR = join(tmpdir(), "chaospong");
+const STORE_DIR =
+  process.env.LOCAL_DATA_DIR ??
+  (process.env.VERCEL ? join("/tmp", "chaospong") : join(process.cwd(), ".chaospong-data"));
 const STORE_FILE = join(STORE_DIR, "matches.json");
 
 function memoryStore() {

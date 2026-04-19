@@ -237,7 +237,7 @@ class TestStreak:
         assert isinstance(data["best_ever"], int)
         assert isinstance(data["threshold"], int)
 
-        # No Mongo ObjectId leaks
+        # No database-specific identifiers leak into API responses.
         assert "_id" not in data
 
     def test_streak_threshold_is_3(self, client):
