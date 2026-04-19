@@ -1,0 +1,15 @@
+{
+  "name": "pong-productivity",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "build": "yarn workspace frontend build",
+    "start": "yarn workspace frontend start",
+    "api:dev": "uvicorn backend.server:app --reload --host 0.0.0.0 --port 8000",
+    "vercel-build": "yarn workspace frontend build"
+  },
+  "packageManager": "yarn@1.22.22"
+}

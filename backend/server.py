@@ -12,11 +12,19 @@ import uuid
 from datetime import datetime, timezone, timedelta
 
 ROOT_DIR = Path(__file__).parent
+PROJECT_ROOT = ROOT_DIR.parent
+load_dotenv(PROJECT_ROOT / '.env')
 load_dotenv(ROOT_DIR / '.env')
 
-mongo_url = os.environ['MONGO_URL']
+mongo_url = os.environ.get('MONGO_URL')
+if not mongo_url:
+    raise RuntimeError(
+        "MONGO_URL is required. Add it to your Vercel project environment variables."
+    )
+
+db_name = os.environ.get('DB_NAME', 'pong_productivity')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db = client[db_name]
 
 app = FastAPI()
 api_router = APIRouter(prefix="/api")
@@ -254,10 +262,16 @@ async def get_streak():
 
 app.include_router(api_router)
 
+cors_origins = [
+    origin.strip()
+    for origin in os.environ.get('CORS_ORIGINS', '*').split(',')
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_credentials=cors_origins != ['*'],
+    allow_origins=cors_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

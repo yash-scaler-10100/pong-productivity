@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 
-const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+const API_BASE = (process.env.REACT_APP_BACKEND_URL || '').replace(/\/$/, '');
+const API = `${API_BASE}/api`;
 
 export function useGameState() {
   const [tasks, setTasks] = useState([]);
