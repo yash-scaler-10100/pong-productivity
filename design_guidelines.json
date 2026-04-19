@@ -1,0 +1,134 @@
+{
+  "theme": "dark",
+  "archetype": "7 (Electric & Neon)",
+  "branding": {
+    "name": "Zenith",
+    "description": "The Ephemeral Physics Productivity Arena",
+    "tone": "High-energy, disruptive, focused, gamified, synthetic"
+  },
+  "colors": {
+    "background": {
+      "base": "#0A0A0A",
+      "surface": "#121212",
+      "surface_elevated": "#1A1A1A"
+    },
+    "primary": {
+      "DEFAULT": "#00FFCC",
+      "hover": "#33FFD6",
+      "glow": "rgba(0, 255, 204, 0.5)",
+      "muted": "rgba(0, 255, 204, 0.15)"
+    },
+    "secondary": {
+      "DEFAULT": "#FF00AA",
+      "hover": "#FF33BB",
+      "glow": "rgba(255, 0, 170, 0.5)",
+      "muted": "rgba(255, 0, 170, 0.15)"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#A1A1AA",
+      "tertiary": "#71717A"
+    },
+    "status": {
+      "success": "#00FFCC",
+      "warning": "#FFD700",
+      "danger": "#FF3B30",
+      "info": "#007AFF"
+    },
+    "borders": {
+      "subtle": "rgba(255, 255, 255, 0.1)",
+      "neon_cyan": "rgba(0, 255, 204, 0.3)",
+      "neon_pink": "rgba(255, 0, 170, 0.3)"
+    }
+  },
+  "typography": {
+    "fonts": {
+      "heading": "Unbounded, display",
+      "body": "JetBrains Mono, monospace",
+      "accent": "Azeret Mono, monospace"
+    },
+    "scale": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter leading-none font-black",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight leading-none font-bold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-bold",
+      "body": "text-sm sm:text-base leading-relaxed font-medium",
+      "label": "text-xs tracking-[0.2em] uppercase font-bold"
+    },
+    "pairing_strategy": "Wide Display Sans for aggressive game-like headings (Unbounded). Sterile, mechanical Mono for the body, stats, and scores (JetBrains Mono). Text must feel like a high-end HUD."
+  },
+  "spacing_and_layout": {
+    "philosophy": "Control Room layout tailored for split-screen intensity. Dense and functional, mapping the physical layout of an arcade cabinet mixed with a trading terminal.",
+    "container_padding": "p-6 sm:p-8 md:p-12",
+    "grid_system": {
+      "type": "split-bento",
+      "columns": "grid-cols-1 lg:grid-cols-2",
+      "gap": "gap-4 sm:gap-8",
+      "behavior": "Left side is the Planner Core (The Jar). Right side is the Game Core (The Arena). In single-view mode, active core takes col-span-full."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary_ship_it": "bg-transparent border-2 border-[#FF00AA] text-[#FF00AA] hover:bg-[#FF00AA] hover:text-white shadow-[0_0_15px_rgba(255,0,170,0.5)] transition-all duration-300 uppercase tracking-widest font-bold px-8 py-4 rounded-none",
+      "secondary": "bg-transparent border border-[#00FFCC]/50 text-[#00FFCC] hover:bg-[#00FFCC]/10 hover:border-[#00FFCC] transition-all px-6 py-3 rounded-none text-sm uppercase tracking-widest"
+    },
+    "cards_and_panels": {
+      "style": "Retro-Futurism (Terminal Look). Black base, 1px cyan or pink borders, inner glow.",
+      "classes": "bg-[#0A0A0A] border border-white/10 backdrop-blur-xl relative overflow-hidden"
+    },
+    "the_jar_simulation": {
+      "style": "Glassmorphism. Needs to look like a realistic 2D glass container.",
+      "classes": "border-x-2 border-b-2 border-white/20 bg-white/5 backdrop-blur-sm rounded-b-3xl shadow-[inset_0_-10px_30px_rgba(0,255,204,0.1)]",
+      "stones": {
+        "high_impact": "bg-[#FF00AA] text-white font-bold text-lg shadow-[0_0_10px_rgba(255,0,170,0.8)]",
+        "medium": "bg-[#00FFCC] text-black font-bold text-sm shadow-[0_0_10px_rgba(0,255,204,0.8)]",
+        "low": "bg-white/20 text-white text-xs border border-white/30 backdrop-blur-md"
+      }
+    },
+    "pong_arena": {
+      "style": "Classic arcade with a hyper-modern neon twist.",
+      "paddle": "bg-[#00FFCC] shadow-[0_0_15px_rgba(0,255,204,0.8)] rounded-full",
+      "ball": "bg-white shadow-[0_0_20px_rgba(255,255,255,1)]",
+      "net": "border-r-2 border-dashed border-white/20"
+    }
+  },
+  "surfaces_and_textures": {
+    "background_effect": "CRT scanlines overlay using repeating-linear-gradient, plus subtle CSS noise. Do not use pure black without the faint cyan/pink ambient glows in corners.",
+    "glass_effects": "Backdrop-blur-xl with backdrop-saturate-150. Border-white/10 on edges."
+  },
+  "motion_and_interactions": {
+    "physics_engine": "Matter.js is highly recommended for the Jar to simulate weight, gravity, and bounds realistically.",
+    "pong_engine": "requestAnimationFrame with custom physics, bounding box collision, and velocity multipliers for combos.",
+    "particles": "Use canvas-based particles for 'Ship It!' bursts (pink/cyan sparks) and daily reset vaporization.",
+    "hover_states": "Buttons must have an aggressive hover state. E.g., instant background fill with heavy box-shadow glow.",
+    "transitions": "Use spring-based animations (Framer Motion) for UI panels. Snappy, rigid, tech-like (stiffness: 300, damping: 25)."
+  },
+  "media": {
+    "images": [
+      {
+        "category": "background_texture",
+        "description": "Abstract grid pattern with warm and cool lighting. Use as a highly opaque (10-15%) overlay for the daily reset replay poster or the background body.",
+        "url": "https://images.unsplash.com/photo-1771873679764-4e5503b69040?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMjd8MHwxfHNlYXJjaHwxfHxuZW9uJTIwZ3JpZCUyMHRleHR1cmV8ZW58MHx8fHwxNzc2NTc2MzEwfDA&ixlib=rb-4.1.0&q=85"
+      },
+      {
+        "category": "abstract_circuits",
+        "description": "Motherboard circuits with a neon glow and diagonal grid overlay. Good for the 'Game Over' or 'Save the Day' snapshot modal background.",
+        "url": "https://images.pexels.com/photos/8108728/pexels-photo-8108728.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940"
+      }
+    ]
+  },
+  "accessibility": {
+    "contrast": "Ensure text over glowing buttons meets APCA standards. If text is black on a cyan button, it's fine. If text is cyan on black, ensure weight is bold enough.",
+    "motion": "Respect prefers-reduced-motion for the particle bursts and physics (allow fallback to simple list view if needed).",
+    "test_attributes": "All interactive elements MUST include data-testid. Examples: data-testid='ship-it-button', data-testid='task-input', data-testid='view-toggle'."
+  },
+  "instructions_to_main_agent": [
+    "Use standard JavaScript (.js/.jsx) with Tailwind CSS.",
+    "Install lucide-react for icons.",
+    "Install framer-motion for UI interactions (menus, modals, layout shifts).",
+    "Use matter-js for the 'Jar' physics simulation (stones dropping, colliding, resting). Provide a canvas overlay.",
+    "For the Pong arena, use a custom requestAnimationFrame loop on a 2D canvas.",
+    "Implement the 'Ship It!' flow: clicking the button removes a task from the Jar, fires a burst of particles, and triggers a ball speed multiplier in the Pong arena.",
+    "The Jar must visually indicate volume/capacity. If the simulated area of the bodies exceeds a threshold, spawn warning particles.",
+    "Ensure the split-screen layout adapts gracefully to mobile (stacking vertically, or providing a toggle between Planner and Arena)."
+  ]
+}
