@@ -22,7 +22,6 @@ node_modules/
 # Next.js
 /.next/
 /out/
-next-env.d.ts
 *.tsbuildinfo
 
 # Production builds
@@ -40,6 +39,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+.next-dev*.log
 dump.rdb
 
 # System files
