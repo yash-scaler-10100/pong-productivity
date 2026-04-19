@@ -1,34 +1,408 @@
-.App-logo {
-    height: 40vmin;
+/* Zenith - The Ephemeral Physics Productivity Arena */
+
+.zenith-root {
+    width: 100vw;
+    height: 100vh;
+    background: #0A0A0A;
+    color: #fff;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Ambient corner glows */
+.zenith-root::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(ellipse at 0% 0%, rgba(0,255,204,0.06) 0%, transparent 40%),
+        radial-gradient(ellipse at 100% 100%, rgba(255,0,170,0.06) 0%, transparent 40%);
     pointer-events: none;
+    z-index: 1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+/* CRT Scanlines */
+.zenith-root::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
+/* HUD Bar */
+.zenith-hud {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 16px;
+}
+
+.zenith-hud-brand {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    background: linear-gradient(135deg, #00FFCC, #FF00AA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    flex-shrink: 0;
+}
+
+.zenith-hud-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    justify-content: center;
+}
+
+.zenith-hud-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+}
+
+.zenith-hud-stat-value {
+    color: #00FFCC;
+    font-weight: 700;
+}
+
+.zenith-hud-stat-value.warning {
+    color: #FFD700;
+}
+
+.zenith-hud-stat-value.danger {
+    color: #FF3B30;
+}
+
+/* Arena Layout */
+.zenith-arena {
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    z-index: 2;
+}
+
+.zenith-jar-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    min-width: 0;
+    transition: flex 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.zenith-pong-section {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+    transition: flex 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.zenith-jar-section.hidden-section,
+.zenith-pong-section.hidden-section {
+    flex: 0;
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    border: none;
+}
+
+/* Canvas */
+.zenith-jar-canvas,
+.zenith-pong-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* Jar Canvas Container */
+.zenith-jar-canvas-wrap {
+    flex: 1;
+    min-height: 0;
+    position: relative;
+}
+
+/* Task Panel */
+.zenith-task-panel {
+    height: 44%;
+    min-height: 200px;
+    background: rgba(12,12,12,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    padding: 12px 16px;
+}
+
+/* View Toggle */
+.zenith-view-toggle {
+    display: flex;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.zenith-view-btn {
+    padding: 4px 10px;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+}
+
+.zenith-view-btn:hover {
+    color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.05);
+}
+
+.zenith-view-btn.active {
+    background: #00FFCC;
+    color: #000;
+}
+
+/* Fuel Bar */
+.zenith-fuel-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+    width: 60px;
+}
+
+.zenith-fuel-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease, background-color 0.3s ease;
+}
+
+/* Loading Screen */
+.zenith-loading {
+    width: 100vw;
+    height: 100vh;
+    background: #0A0A0A;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+    animation: fadeIn 0.5s ease;
 }
 
-.App-link {
-    color: #61dafb;
+.zenith-loading-logo {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #00FFCC, #FF00AA);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.2em;
+    animation: pulseGlow 2s ease-in-out infinite;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.zenith-loading-tagline {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.35);
+    margin-top: 16px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+/* Task Items */
+.zenith-task-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+    background: rgba(255,255,255,0.02);
+}
+
+.zenith-task-item:hover {
+    border-color: rgba(0,255,204,0.2);
+    background: rgba(0,255,204,0.03);
+}
+
+.zenith-task-type-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.zenith-task-type-dot.stone {
+    background: #FF00AA;
+    box-shadow: 0 0 8px rgba(255,0,170,0.6);
+}
+
+.zenith-task-type-dot.pebble {
+    background: #00FFCC;
+    box-shadow: 0 0 8px rgba(0,255,204,0.6);
+}
+
+.zenith-task-type-dot.sand {
+    background: rgba(255,255,255,0.4);
+    box-shadow: 0 0 4px rgba(255,255,255,0.2);
+}
+
+/* Ship It Button */
+.zenith-ship-btn {
+    border: 1px solid rgba(255,0,170,0.5);
+    color: #FF00AA;
+    background: transparent;
+    padding: 2px 8px;
+    font-size: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.zenith-ship-btn:hover {
+    background: #FF00AA;
+    color: #fff;
+    box-shadow: 0 0 15px rgba(255,0,170,0.5);
+}
+
+/* Shipped task style */
+.zenith-task-shipped {
+    opacity: 0.35;
+    text-decoration: line-through;
+}
+
+/* Volume Meter */
+.zenith-volume-bar {
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.08);
+    overflow: hidden;
+}
+
+.zenith-volume-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease, background-color 0.3s ease;
+}
+
+/* Empty state */
+.zenith-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.2);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    gap: 8px;
+    padding: 24px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { opacity: 1; filter: brightness(1); }
+    50% { opacity: 0.7; filter: brightness(1.2); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+    animation: slideUp 0.3s ease forwards;
+}
+
+/* Poster Modal */
+.zenith-poster-preview {
+    border: 1px solid rgba(255,255,255,0.1);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Scrollbar */
+.zenith-task-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.zenith-task-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.zenith-task-list::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+.zenith-task-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* Save Day Button */
+.zenith-save-btn {
+    border: 1px solid rgba(0,255,204,0.4);
+    color: #00FFCC;
+    background: transparent;
+    padding: 4px 12px;
+    font-size: 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.zenith-save-btn:hover {
+    background: #00FFCC;
+    color: #000;
+    box-shadow: 0 0 12px rgba(0,255,204,0.4);
 }
