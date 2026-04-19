@@ -64,7 +64,7 @@ export default function HUD({ session, view, setView, jarFill, fuelUsed, maxVolu
                     : 'Ship 3+ tasks daily to build a streak'}
                 </p>
                 {streak.best_ever > 0 && (
-                  <p className="text-white/50">Best ever: {streak.best_ever} days</p>
+                  <p className="text-white/50">Best ever: {streak.best_ever} {streak.best_ever === 1 ? 'day' : 'days'}</p>
                 )}
                 {streakAtRisk && (
                   <p className="text-[#FFD700]">

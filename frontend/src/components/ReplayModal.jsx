@@ -212,7 +212,7 @@ export default function ReplayModal({ session, shippedTasks, allTasks, streak, o
     ctx.font = 'bold 36px JetBrains Mono, monospace';
     ctx.fillStyle = '#FF6B35';
     ctx.textBaseline = 'alphabetic';
-    ctx.fillText(streakNum === 1 ? 'DAY STREAK' : 'DAY STREAK', cx, S * 0.68);
+    ctx.fillText(streakNum === 1 ? 'DAY STREAK' : 'DAYS STREAK', cx, S * 0.68);
 
     // Stats line
     ctx.font = '20px JetBrains Mono, monospace';

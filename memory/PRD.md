@@ -67,3 +67,13 @@ Build Zenith - a browser-first, full-screen productivity arena that combines:
 3. Add inactivity slowdown mechanic
 4. Enhance poster design with more stats and timeline
 5. Add task drag-and-drop in panel
+
+## Streak System (Added 2026-04-19)
+- Backend: `/api/streak` endpoint calculates consecutive days with 3+ shipped tasks
+- Tracks: current streak, today's progress, ships needed, streak at risk, best ever
+- Best streak persisted in `db.stats` collection via `$max` operator
+- Frontend HUD: Flame icon with fire glow animation, tooltip with details
+- Streak at risk: shows "ship X more!" nudge when yesterday's streak might expire
+- Replay Modal: two tabs — Day Poster (1200x630) and Streak Card (1080x1080 square)
+- Streak Card: canvas-drawn fire symbol, streak number, stats, optimized for social sharing
+- Day Poster: now includes streak badge next to ZENITH title
