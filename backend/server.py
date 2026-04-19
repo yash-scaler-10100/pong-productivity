@@ -7,7 +7,7 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Literal
 import uuid
 from datetime import datetime, timezone
 
@@ -51,7 +51,7 @@ async def get_or_create_session():
 
 class TaskCreate(BaseModel):
     title: str
-    task_type: str = "pebble"
+    task_type: Literal["stone", "pebble", "sand"] = "pebble"
 
 
 class ShipRequest(BaseModel):
@@ -197,4 +197,6 @@ logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    client.close()
+nt():
     client.close()
